@@ -1,9 +1,0 @@
-QUICK SORT pokemonRandomLarge.csv comparison count: 15094
-QUICK SORT pokemonRandomMedium.csv comparison count: 6101
-QUICK SORT pokemonRandomSmall.csv comparison count: 1585
-QUICK SORT pokemonReverseSortedLarge.csv comparison count: 160303
-QUICK SORT pokemonReverseSortedMedium.csv comparison count: 50197
-QUICK SORT pokemonReverseSortedSmall.csv comparison count: 9283
-QUICK SORT pokemonSortedLarge.csv comparison count: 96281
-QUICK SORT pokemonSortedMedium.csv comparison count: 31505
-QUICK SORT pokemonSortedSmall.csv comparison count: 7598

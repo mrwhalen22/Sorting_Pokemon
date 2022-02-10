@@ -1,0 +1,9 @@
+MERGE SORT pokemonRandomLarge.csv: number of values = 800, comparison count = 7776
+MERGE SORT pokemonRandomMedium.csv: number of values = 432, comparison count = 3808
+MERGE SORT pokemonRandomSmall.csv: number of values = 166, comparison count = 1238
+MERGE SORT pokemonReverseSortedLarge.csv: number of values = 800, comparison count = 7776
+MERGE SORT pokemonReverseSortedMedium.csv: number of values = 432, comparison count = 3808
+MERGE SORT pokemonReverseSortedSmall.csv: number of values = 166, comparison count = 1238
+MERGE SORT pokemonSortedLarge.csv: number of values = 800, comparison count = 7776
+MERGE SORT pokemonSortedMedium.csv: number of values = 432, comparison count = 3808
+MERGE SORT pokemonSortedSmall.csv: number of values = 166, comparison count = 1238
