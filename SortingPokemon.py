@@ -10,38 +10,49 @@ from matplotlib import pyplot as plt
 
 def insertion_sort(data) -> int:
     count = 0
+    # ITERATE OVER EVERY ELEMENT
     for i in range(1, len(data)):
         key = data[i]
         j = i - 1
+
+        # ITERATE OVER EVERY CURRENTLY SORTED ELEMENT AND CHECK IF CURR ELEMENT IS LESS THAN SORTED ELEMENT
         while((j >= 0 and data[j][1] > key[1]) or (data[j][1] == key[1] and data[j][0] > key[0])):
+            # PUSH SORTED ELEMENT FORWARD
             data[j+1] = data[j]
             j-=1
             count += 1
+        # PLACE CURR ELEMENT INTO POSITION
         data[j+1] = key
     return count
 
 def merge_sort(data) -> int:
     count = 0
     if(len(data) > 1):
+        # SPLIT DATA IN HALF
         mid = len(data)//2
         L = data[:mid]
         R = data[mid:]
   
+        # OPERATE OVER BOTH HALVES
         count += merge_sort(L)
         count += merge_sort(R)
   
         i = j = k = 0
   
+        # OPERATE OVER EVERY ELEMENT IN BOTH LEFT AND RIGHT DATASETS
         while(i < len(L) and j < len(R)):
             count+=1
+            # IF THE LEFT ONE IS SMALLER, ADD IT TO THE ORIGINAL DATASET
             if((L[i][1] < R[j][1]) or (L[i][1] == R[j][1] and L[i][0] < R[j][0])):
                 data[k] = L[i]
                 i += 1
+            # OTHERWISE PUT THE RIGHT ONE IN
             else:
                 data[k] = R[j]
                 j += 1
             k += 1
 
+        # CHECKING FOR LEFTOVERS IN EITHER SUB-DATASET
         while(i < len(L)):
             count+=1
             data[k] = L[i]
@@ -60,6 +71,7 @@ def partition(data, begin, end) -> Tuple[int, int]:
     j = begin-1
     pivot = data[end]
     
+    # LOCATES THE INDEX WHERE THE PIVOT ELEMENT SHOULD BE SORTED TO AND THEN SWAPS IT THERE
     for i in range(begin, end):
         if((data[i][1] < pivot[1]) or ((data[i][1] == pivot[1]) and  (data[i][0] < pivot[0]))):
             count+=1
@@ -71,13 +83,17 @@ def partition(data, begin, end) -> Tuple[int, int]:
 def quick_sort(data, begin, end) -> int:
     count = 0
     if( begin < end):
+        # PLACES PIVOT IN CORRECT LOCATION AND RETURNS IT AS A TUPLE [div, count]
         result = partition(data, begin, end)
         div = result[0]
         count += result[1]
+
+        # RUN AGAIN ON THE UNSORTED PARTITIONS
         count += quick_sort(data, begin, div-1)
         count += quick_sort(data, div+1, end)
     return count
 
+# CHECK IF THE DATASET IS SORTED, IF NOT, PRINT OUT THE ELEMENTS COMPARED
 def isSorted(data) -> bool:
     for i in range(len(data)-1):
         if(data[i][1] > data[i+1][1]):
@@ -99,6 +115,8 @@ def main() -> int:
     #INIT VARS AND PARSE CSV FILENAMES    
     pokemon_data = {}
     sort_counts = {}
+
+    # LIST COMPREHENSION WHICH GETS EVERY FILE IN CURRENT DIRECTORY AND LOOKS FOR THE .CSV EXTENSION
     csv_files = list(filter(lambda x: ".csv" in x, os.listdir("./"))) 
     
     # READ IN CSV FILE DATA
@@ -113,7 +131,7 @@ def main() -> int:
         pokemon_data[filename] = data
         file.close()
                      
-    #SORT ALL DATA LISTS
+    #SORT ALL DATA LISTS AND THEN VERIFIES THAT IT SORTS PROPERLY
     if(len(options) == 1):
         # INSERTION SORT BY DEFAULT
         print("Sorting with Insertion Sort. Please give an option for other sorting methods.")
@@ -153,7 +171,8 @@ def main() -> int:
     for file in csv_files:
         output.writelines(("INSERTION" if len(options) < 2 else options[1].upper()) + " SORT " + file + ": number of values = " + str(len(pokemon_data[file])) + ", comparison count = " + str(sort_counts[file]) + "\n")
         #print(("INSERTION" if len(options) < 2 else options[1].upper()) + " SORT " + file + " comparison count: " + str(sort_counts[file]))
-    
+    output.close()
+
     print("Data exported to text file.")
 
     pxRa=[]
@@ -163,6 +182,8 @@ def main() -> int:
     pxS=[]
     pyS=[]
     i = 0
+
+    # CREATE POINT SETS FOR EACH DATASET TYPE
     for file in csv_files:
         if(i < 3):
             pxRa.append(len(pokemon_data[file]))
@@ -175,6 +196,8 @@ def main() -> int:
             pxS.append(len(pokemon_data[file]))
             pyS.append(sort_counts[file])
         i+=1
+
+    # USE MATPLOTLIB TO CREATE A PLOT TO SHOW THE SORT COUNT DATA
     plt.plot(pxRa,pyRa, label = "Random")
     plt.plot(pxRe,pyRe, label = "Reverse")
     plt.plot(pxS,pyS, label = "Sorted")
@@ -184,11 +207,12 @@ def main() -> int:
     plt.ylabel("Number of Comparisons Made")
     plt.title("Sort Comparisons - " + options[1].upper())
 
-    print("Displaying Graph.")
+    print("Displaying and Saving Graph.")
+
+    save_plot = options[1].upper() + "SORT.png"
+    print("Saving plot as " + save_plot)
+    plt.savefig(save_plot, dpi=300, format="png")
     plt.show()
-
-
-
     return 1
 
 if __name__ == "__main__":
