@@ -7,6 +7,14 @@ import os
 from typing import Tuple
 from matplotlib import pyplot as plt
 
+def LessThanPoke(poke1, poke2) -> bool:
+    if(poke1[1] > poke2[1]):
+        return False
+    elif(poke1[1] == poke2[1] and poke1[0][0] > poke2[0][0]):
+        return False
+    elif(poke1[1] == poke2[1] and poke1[0][0] == poke2[0][0] and poke1[0][1] > poke2[0][1]):
+        return False
+    return True
 
 def insertion_sort(data) -> int:
     count = 0
@@ -16,12 +24,13 @@ def insertion_sort(data) -> int:
         j = i - 1
 
         # ITERATE OVER EVERY CURRENTLY SORTED ELEMENT AND CHECK IF CURR ELEMENT IS LESS THAN SORTED ELEMENT
-        while((j >= 0 and data[j][1] > key[1]) or (data[j][1] == key[1] and data[j][0] > key[0])):
+        while(j >= 0 and not LessThanPoke(data[j], key)):
             # PUSH SORTED ELEMENT FORWARD
             data[j+1] = data[j]
             j-=1
             count += 1
         # PLACE CURR ELEMENT INTO POSITION
+        count+=1
         data[j+1] = key
     return count
 
@@ -37,13 +46,15 @@ def merge_sort(data) -> int:
         count += merge_sort(L)
         count += merge_sort(R)
   
-        i = j = k = 0
+        i = 0
+        j = 0
+        k = 0
   
         # OPERATE OVER EVERY ELEMENT IN BOTH LEFT AND RIGHT DATASETS
         while(i < len(L) and j < len(R)):
             count+=1
             # IF THE LEFT ONE IS SMALLER, ADD IT TO THE ORIGINAL DATASET
-            if((L[i][1] < R[j][1]) or (L[i][1] == R[j][1] and L[i][0] < R[j][0])):
+            if(LessThanPoke(L[i], R[j])):
                 data[k] = L[i]
                 i += 1
             # OTHERWISE PUT THE RIGHT ONE IN
@@ -64,6 +75,9 @@ def merge_sort(data) -> int:
             data[k] = R[j]
             j += 1
             k += 1
+
+
+
     return count
 
 def partition(data, begin, end) -> Tuple[int, int]:
@@ -73,7 +87,7 @@ def partition(data, begin, end) -> Tuple[int, int]:
     
     # LOCATES THE INDEX WHERE THE PIVOT ELEMENT SHOULD BE SORTED TO AND THEN SWAPS IT THERE
     for i in range(begin, end):
-        if((data[i][1] < pivot[1]) or ((data[i][1] == pivot[1]) and  (data[i][0] < pivot[0]))):
+        if(LessThanPoke(data[i], pivot)):
             count+=1
             j+=1
             data[i], data[j] = data[j], data[i]
@@ -96,13 +110,23 @@ def quick_sort(data, begin, end) -> int:
 # CHECK IF THE DATASET IS SORTED, IF NOT, PRINT OUT THE ELEMENTS COMPARED
 def isSorted(data) -> bool:
     for i in range(len(data)-1):
-        if(data[i][1] > data[i+1][1]):
-            print(data[i], data[i+1])
-            return False
-        elif(data[i][1] == data[i+1][1] and data[i][0] > data[i+1][0]):
+        if(not LessThanPoke(data[i], data[i+1])):
             print(data[i], data[i+1])
             return False
     return True
+
+def GetDigits(str) -> tuple[int, str]:
+    digits = ""
+    chars = ""
+    for i in range(0,len(str)):
+        if(str[i].isnumeric()):
+            digits += str[i]
+        else:
+            chars += str[i]
+    
+    return [ int(digits), chars]
+
+
 
 def main() -> int:
     #CHECK FOR ARGUMENTS
@@ -118,6 +142,7 @@ def main() -> int:
 
     # LIST COMPREHENSION WHICH GETS EVERY FILE IN CURRENT DIRECTORY AND LOOKS FOR THE .CSV EXTENSION
     csv_files = list(filter(lambda x: ".csv" in x, os.listdir("./"))) 
+    #csv_files = ["pokemonRandomSmall.csv"]
     
     # READ IN CSV FILE DATA
     for filename in csv_files:
@@ -128,6 +153,7 @@ def main() -> int:
             data[i] = data[i].rstrip("\n")
             data[i] = data[i].split(",")
             data[i][1] = int(data[i][1])
+            data[i][0] = GetDigits(data[i][0])
         pokemon_data[filename] = data
         file.close()
                      
@@ -144,6 +170,7 @@ def main() -> int:
         print("Sorting with Insertion Sort.")
         for file in csv_files:
             sort_counts[file] = insertion_sort(pokemon_data[file])
+            #print(pokemon_data[file])
             if(isSorted(pokemon_data[file])): print(file + ": SUCCESS")
             else: print(file + ": FAILURE")
     elif(options[1].upper() == "MERGE"):
@@ -151,6 +178,7 @@ def main() -> int:
         print("Sorting using Merge Sort.")
         for file in csv_files:
             sort_counts[file] = merge_sort(pokemon_data[file])
+            #print(pokemon_data[file])
             if(isSorted(pokemon_data[file])): print(file + ": SUCCESS")
             else: print(file  + ": FAILURE")
     elif(options[1].upper() == "QUICK"):
@@ -212,7 +240,7 @@ def main() -> int:
     save_plot = options[1].upper() + "SORT.png"
     print("Saving plot as " + save_plot)
     plt.savefig(save_plot, dpi=300, format="png")
-    plt.show()
+    #plt.show()
     return 1
 
 if __name__ == "__main__":
